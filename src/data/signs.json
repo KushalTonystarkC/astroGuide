@@ -1,0 +1,86 @@
+{
+  "Aries": {
+    "name": "Aries",
+    "element": "Fire",
+    "ruler": "Mars",
+    "summary": "Bold, pioneering, and full of initiative. Aries energy drives action and leadership.",
+    "traits": ["Courageous", "Independent", "Energetic", "Direct"]
+  },
+  "Taurus": {
+    "name": "Taurus",
+    "element": "Earth",
+    "ruler": "Venus",
+    "summary": "Practical, grounded, dependable and emotionally stable.",
+    "traits": ["Patient", "Reliable", "Sensual", "Determined"]
+  },
+  "Gemini": {
+    "name": "Gemini",
+    "element": "Air",
+    "ruler": "Mercury",
+    "summary": "Curious, communicative, and adaptable. Gemini thrives on variety and intellectual exchange.",
+    "traits": ["Witty", "Versatile", "Social", "Analytical"]
+  },
+  "Cancer": {
+    "name": "Cancer",
+    "element": "Water",
+    "ruler": "Moon",
+    "summary": "Nurturing, intuitive, and deeply connected to home and family.",
+    "traits": ["Empathetic", "Protective", "Imaginative", "Loyal"]
+  },
+  "Leo": {
+    "name": "Leo",
+    "element": "Fire",
+    "ruler": "Sun",
+    "summary": "Radiant, creative, and confident. Leo expresses warmth and natural leadership.",
+    "traits": ["Generous", "Dramatic", "Warm-hearted", "Proud"]
+  },
+  "Virgo": {
+    "name": "Virgo",
+    "element": "Earth",
+    "ruler": "Mercury",
+    "summary": "Analytical, precise, and service-oriented. Virgo seeks perfection through practical wisdom.",
+    "traits": ["Methodical", "Helpful", "Modest", "Detail-oriented"]
+  },
+  "Libra": {
+    "name": "Libra",
+    "element": "Air",
+    "ruler": "Venus",
+    "summary": "Harmonious, diplomatic, and drawn to beauty and balanced relationships.",
+    "traits": ["Fair-minded", "Cooperative", "Gracious", "Idealistic"]
+  },
+  "Scorpio": {
+    "name": "Scorpio",
+    "element": "Water",
+    "ruler": "Mars & Pluto",
+    "summary": "Intense, transformative, and perceptive. Scorpio penetrates beneath the surface.",
+    "traits": ["Passionate", "Resourceful", "Magnetic", "Strategic"]
+  },
+  "Sagittarius": {
+    "name": "Sagittarius",
+    "element": "Fire",
+    "ruler": "Jupiter",
+    "summary": "Optimistic, philosophical, and freedom-loving. Sagittarius seeks truth and expansion.",
+    "traits": ["Adventurous", "Honest", "Philosophical", "Generous"]
+  },
+  "Capricorn": {
+    "name": "Capricorn",
+    "element": "Earth",
+    "ruler": "Saturn",
+    "summary": "Ambitious, disciplined, and structured. Capricorn builds lasting foundations.",
+    "traits": ["Responsible", "Patient", "Ambitious", "Practical"]
+  },
+  "Aquarius": {
+    "name": "Aquarius",
+    "element": "Air",
+    "ruler": "Saturn & Uranus",
+    "summary": "Innovative, humanitarian, and independent. Aquarius envisions the future.",
+    "traits": ["Original", "Progressive", "Humanitarian", "Intellectual"]
+  },
+  "Pisces": {
+    "name": "Pisces",
+    "element": "Water",
+    "ruler": "Jupiter & Neptune",
+    "summary": "Compassionate, imaginative, and spiritually attuned. Pisces flows with intuition.",
+    "traits": ["Empathetic", "Artistic", "Intuitive", "Gentle"]
+  }
+}

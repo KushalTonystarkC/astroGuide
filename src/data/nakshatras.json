@@ -1,0 +1,164 @@
+{
+  "Ashwini": {
+    "name": "Ashwini",
+    "deity": "Ashwini Kumaras",
+    "symbol": "Horse's Head",
+    "summary": "Swift healing energy, new beginnings, and pioneering spirit."
+  },
+  "Bharani": {
+    "name": "Bharani",
+    "deity": "Yama",
+    "symbol": "Yoni",
+    "summary": "Transformative power, bearing responsibility, and creative life force."
+  },
+  "Krittika": {
+    "name": "Krittika",
+    "deity": "Agni",
+    "symbol": "Razor / Flame",
+    "summary": "Sharp discernment, purification, and cutting through illusion."
+  },
+  "Rohini": {
+    "name": "Rohini",
+    "deity": "Brahma",
+    "symbol": "Chariot / Ox Cart",
+    "summary": "Fertility, beauty, material abundance, and creative manifestation."
+  },
+  "Mrigashira": {
+    "name": "Mrigashira",
+    "deity": "Soma",
+    "symbol": "Deer's Head",
+    "summary": "Gentle seeking, curiosity, and the quest for fulfillment."
+  },
+  "Ardra": {
+    "name": "Ardra",
+    "deity": "Rudra",
+    "symbol": "Teardrop / Diamond",
+    "summary": "Storm energy, emotional release, and profound transformation."
+  },
+  "Punarvasu": {
+    "name": "Punarvasu",
+    "deity": "Aditi",
+    "symbol": "Quiver of Arrows",
+    "summary": "Renewal, return to source, and nurturing restoration."
+  },
+  "Pushya": {
+    "name": "Pushya",
+    "deity": "Brihaspati",
+    "symbol": "Cow's Udder / Flower",
+    "summary": "Nourishment, spiritual growth, and auspicious prosperity."
+  },
+  "Ashlesha": {
+    "name": "Ashlesha",
+    "deity": "Nagas",
+    "symbol": "Coiled Serpent",
+    "summary": "Mystical insight, hypnotic influence, and kundalini energy."
+  },
+  "Magha": {
+    "name": "Magha",
+    "deity": "Pitris",
+    "symbol": "Royal Throne",
+    "summary": "Ancestral honor, authority, and connection to lineage."
+  },
+  "Purva Phalguni": {
+    "name": "Purva Phalguni",
+    "deity": "Bhaga",
+    "symbol": "Hammock / Front Legs of Bed",
+    "summary": "Creative pleasure, romance, and relaxed enjoyment of life."
+  },
+  "Uttara Phalguni": {
+    "name": "Uttara Phalguni",
+    "deity": "Aryaman",
+    "symbol": "Fig Tree / Back Legs of Bed",
+    "summary": "Partnership, contracts, and generous social bonds."
+  },
+  "Hasta": {
+    "name": "Hasta",
+    "deity": "Savitar",
+    "symbol": "Hand / Fist",
+    "summary": "Skillful craftsmanship, dexterity, and manifesting through action."
+  },
+  "Chitra": {
+    "name": "Chitra",
+    "deity": "Vishvakarma",
+    "symbol": "Bright Jewel / Pearl",
+    "summary": "Artistic brilliance, architectural vision, and radiant beauty."
+  },
+  "Swati": {
+    "name": "Swati",
+    "deity": "Vayu",
+    "symbol": "Young Plant / Sword",
+    "summary": "Independence, flexibility, and movement like the wind."
+  },
+  "Vishakha": {
+    "name": "Vishakha",
+    "deity": "Indra & Agni",
+    "symbol": "Triumphal Arch",
+    "summary": "Determined focus, goal achievement, and dual-purpose energy."
+  },
+  "Anuradha": {
+    "name": "Anuradha",
+    "deity": "Mitra",
+    "symbol": "Lotus",
+    "summary": "Devotion, friendship, and success through cooperation."
+  },
+  "Jyeshtha": {
+    "name": "Jyeshtha",
+    "deity": "Indra",
+    "symbol": "Earring / Umbrella",
+    "summary": "Seniority, protection, and authoritative presence."
+  },
+  "Mula": {
+    "name": "Mula",
+    "deity": "Nirriti",
+    "symbol": "Bunch of Roots",
+    "summary": "Root-level investigation, uprooting, and spiritual foundation."
+  },
+  "Purva Ashadha": {
+    "name": "Purva Ashadha",
+    "deity": "Apas",
+    "symbol": "Fan / Winnowing Basket",
+    "summary": "Invincible optimism, purification, and unstoppable conviction."
+  },
+  "Uttara Ashadha": {
+    "name": "Uttara Ashadha",
+    "deity": "Vishvadevas",
+    "symbol": "Elephant Tusk / Planks of Bed",
+    "summary": "Enduring victory, leadership, and universal dharma."
+  },
+  "Shravana": {
+    "name": "Shravana",
+    "deity": "Vishnu",
+    "symbol": "Ear / Three Footprints",
+    "summary": "Learning through listening, sacred knowledge, and connection."
+  },
+  "Dhanishta": {
+    "name": "Dhanishta",
+    "deity": "Vasus",
+    "symbol": "Drum / Flute",
+    "summary": "Rhythmic prosperity, fame, and wealth through talent."
+  },
+  "Shatabhisha": {
+    "name": "Shatabhisha",
+    "deity": "Varuna",
+    "symbol": "Empty Circle / Hundred Stars",
+    "summary": "Healing mysteries, cosmic consciousness, and unconventional wisdom."
+  },
+  "Purva Bhadrapada": {
+    "name": "Purva Bhadrapada",
+    "deity": "Aja Ekapada",
+    "symbol": "Sword / Two Front Legs of Funeral Cot",
+    "summary": "Intense spiritual fire, sacrifice, and transformative idealism."
+  },
+  "Uttara Bhadrapada": {
+    "name": "Uttara Bhadrapada",
+    "deity": "Ahir Budhnya",
+    "symbol": "Twins / Back Legs of Funeral Cot",
+    "summary": "Deep wisdom, cosmic serpent energy, and karmic completion."
+  },
+  "Revati": {
+    "name": "Revati",
+    "deity": "Pushan",
+    "symbol": "Fish / Drum",
+    "summary": "Safe journeys, nourishment, and compassionate completion."
+  }
+}

@@ -1,0 +1,56 @@
+{
+  "Sun": {
+    "name": "Sun",
+    "symbol": "☉",
+    "nature": "Sattvic",
+    "significance": "Soul, vitality, authority, father, and core identity."
+  },
+  "Moon": {
+    "name": "Moon",
+    "symbol": "☽",
+    "nature": "Sattvic",
+    "significance": "Mind, emotions, mother, intuition, and mental peace."
+  },
+  "Mars": {
+    "name": "Mars",
+    "symbol": "♂",
+    "nature": "Tamasic",
+    "significance": "Courage, energy, siblings, property, and assertive drive."
+  },
+  "Mercury": {
+    "name": "Mercury",
+    "symbol": "☿",
+    "nature": "Rajasic",
+    "significance": "Intellect, communication, commerce, and analytical skill."
+  },
+  "Venus": {
+    "name": "Venus",
+    "symbol": "♀",
+    "nature": "Rajasic",
+    "significance": "Love, beauty, arts, luxury, and harmonious relationships."
+  },
+  "Jupiter": {
+    "name": "Jupiter",
+    "symbol": "♃",
+    "nature": "Sattvic",
+    "significance": "Wisdom, expansion, spirituality, children, and good fortune."
+  },
+  "Saturn": {
+    "name": "Saturn",
+    "symbol": "♄",
+    "nature": "Tamasic",
+    "significance": "Discipline, karma, longevity, structure, and life lessons."
+  },
+  "Rahu": {
+    "name": "Rahu",
+    "symbol": "☊",
+    "nature": "Tamasic",
+    "significance": "Worldly desires, obsession, unconventional paths, and ambition."
+  },
+  "Ketu": {
+    "name": "Ketu",
+    "symbol": "☋",
+    "nature": "Tamasic",
+    "significance": "Spiritual liberation, detachment, past karma, and moksha."
+  }
+}

@@ -1,36 +1,108 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# AstroGuide — Vedic Astrology MVP
 
-## Getting Started
+A production-quality MVP for Vedic astrology chart generation built with Next.js 15, TypeScript, Tailwind CSS, and shadcn/ui.
 
-First, run the development server:
+## Features
+
+- Birth details form with React Hook Form + Zod validation
+- Mock astrology engine (deterministic, API-ready architecture)
+- Birth chart summary, planet positions table, sign interpretations
+- Local storage for saved charts
+- Chart history with delete support
+- Dark mode, responsive layout, accessible UI
+
+## Tech Stack
+
+- **Next.js 15** (App Router)
+- **TypeScript**
+- **Tailwind CSS v4**
+- **shadcn/ui**
+- **React Hook Form** + **Zod**
+- **TanStack Query**
+- **Lucide React**
+- **next-themes**
+
+## Quick Start
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Project Structure
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```
+src/
+├── app/                    # Routes & API
+├── components/
+│   ├── astrology/          # Chart-specific UI
+│   ├── layout/             # Navbar, footer
+│   └── shared/             # Reusable primitives
+├── data/                   # signs, nakshatras, planets JSON
+├── lib/                    # Engine, storage, validation
+└── types/                  # TypeScript interfaces
+```
 
-## Learn More
+## API
 
-To learn more about Next.js, take a look at the following resources:
+`POST /api/astrology`
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Request body:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```json
+{
+  "name": "string",
+  "birthDate": "YYYY-MM-DD",
+  "birthTime": "HH:MM",
+  "birthPlace": "string"
+}
+```
 
-## Deploy on Vercel
+Simulates 1000ms network delay and returns mock chart data.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Replacing the Mock Engine
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+1. Implement your provider in `src/lib/astrology.ts` (or a new `src/lib/providers/` module).
+2. Update `src/app/api/astrology/route.ts` to call the real provider.
+3. Keep response shape aligned with `AstrologyChart` in `src/types/astrology.ts`.
+
+## shadcn Components Installed
+
+- button, card, form, input, label, table, skeleton, sheet, separator, badge, alert-dialog, sonner
+
+To add more:
+
+```bash
+npx shadcn@latest add [component]
+```
+
+## npm Packages
+
+**Runtime:** next, react, react-dom, react-hook-form, zod, @hookform/resolvers, @tanstack/react-query, lucide-react, class-variance-authority, clsx, tailwind-merge, next-themes, @radix-ui/react-label, @radix-ui/react-slot
+
+**Dev:** typescript, tailwindcss, eslint, eslint-config-next
+
+## Scripts
+
+| Command        | Description          |
+|----------------|----------------------|
+| `npm run dev`  | Start dev server     |
+| `npm run build`| Production build     |
+| `npm run start`| Start production     |
+| `npm run lint` | Run ESLint           |
+
+## Routes
+
+| Path       | Description                |
+|------------|----------------------------|
+| `/`        | Landing page               |
+| `/chart`   | Generate & view charts     |
+| `/history` | Saved charts (localStorage)|
+| `/chart?sample=true` | Sample report   |
+| `/chart?id={uuid}`   | View saved chart |
+
+## License
+
+Private MVP — for demonstration purposes.
