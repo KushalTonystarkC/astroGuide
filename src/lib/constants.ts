@@ -16,7 +16,7 @@ export const FOOTER_LINKS = [
 
 export { RASHIS as ZODIAC_SIGNS } from "@/data/zodiac-signs"
 export { NAKSHATRAS } from "@/data/nakshatras"
-export { SEVEN_GRAHAS as PLANET_NAMES } from "@/data/planets"
+export { GRAHAS as PLANET_NAMES } from "@/data/planets"
 
 export const FEATURE_CARDS = [
   {

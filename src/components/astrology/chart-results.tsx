@@ -2,7 +2,7 @@
 
 import { CheckCircle2 } from "lucide-react"
 
-import { BirthChartWheel } from "@/components/astrology/birth-chart-wheel"
+import { BirthChartNorthIndian } from "@/components/astrology/birth-chart-north-indian"
 import { ChartSummary } from "@/components/astrology/chart-summary"
 import { HouseTable } from "@/components/astrology/house-table"
 import { PlanetTable } from "@/components/astrology/planet-table"
@@ -43,7 +43,7 @@ export function ChartResults({ chart, birthDetails }: ChartResultsProps) {
         </div>
       </div>
 
-      <BirthChartWheel chart={chart} />
+      <BirthChartNorthIndian chart={chart} />
       <ChartSummary chart={chart} />
       <PlanetTable planets={chart.planets} />
       <HouseTable houses={chart.houses} />

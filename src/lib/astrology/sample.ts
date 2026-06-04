@@ -15,6 +15,8 @@ export const SAMPLE_KUNDLI: KundliChart = {
     { planet: "Venus", sign: "Karka", degree: 22.4, house: 9 },
     { planet: "Jupiter", sign: "Dhanu", degree: 8.7, house: 2 },
     { planet: "Saturn", sign: "Kumbha", degree: 19.2, house: 4 },
+    { planet: "Rahu", sign: "Vrishabha", degree: 5.0, house: 7 },
+    { planet: "Ketu", sign: "Vrischika", degree: 5.0, house: 1 },
   ],
   houses: [
     { house: 1, sign: "Vrischika" },

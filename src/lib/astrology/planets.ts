@@ -7,7 +7,7 @@ export { GRAHAS, SEVEN_GRAHAS, type GrahaName }
 export function buildPlanetPositions(
   positions: SiderealLongitude[],
   ascendantLongitude: number,
-  grahas: readonly string[] = SEVEN_GRAHAS
+  grahas: readonly string[] = GRAHAS
 ): PlanetPosition[] {
   const longitudeByPlanet = new Map(
     positions.map((entry) => [entry.planet, entry.longitude])
