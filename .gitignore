@@ -20,6 +20,9 @@
 # production
 /build
 
+# Swiss Ephemeris data files (downloaded via npm run setup:ephemeris)
+/ephemeris/
+
 # misc
 .DS_Store
 *.pem

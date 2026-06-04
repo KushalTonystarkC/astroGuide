@@ -22,7 +22,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
-import type { SavedChart } from "@/types/astrology"
+import type { SavedChart } from "@/types/birth"
 
 interface ChartHistoryProps {
   charts: SavedChart[]
@@ -82,17 +82,18 @@ export function ChartHistory({ charts, onDelete }: ChartHistoryProps) {
           <CardContent className="space-y-4">
             <p className="flex items-center gap-1 text-sm text-muted-foreground">
               <MapPin className="size-3.5 shrink-0" aria-hidden="true" />
-              {saved.birthDetails.birthPlace}
+              {saved.birthDetails.place}
             </p>
             <div className="flex flex-wrap gap-2">
               <Badge variant="secondary">
-                Lagna: {saved.chartData.ascendant}
+                Lagna: {saved.chartData.lagna}
               </Badge>
               <Badge variant="outline">
                 Moon: {saved.chartData.moonSign}
               </Badge>
               <Badge variant="outline">
-                {saved.chartData.nakshatra}
+                {saved.chartData.nakshatra.name} P
+                {saved.chartData.nakshatra.pada}
               </Badge>
             </div>
             <ButtonLink

@@ -1,5 +1,5 @@
 import { STORAGE_KEY } from "@/lib/constants"
-import type { BirthDetails, SavedChart } from "@/types/astrology"
+import type { SavedChart } from "@/types/birth"
 
 function isBrowser(): boolean {
   return typeof window !== "undefined"
@@ -35,7 +35,7 @@ export function getChartById(id: string): SavedChart | undefined {
 }
 
 export function saveChart(
-  birthDetails: BirthDetails,
+  birthDetails: SavedChart["birthDetails"],
   chartData: SavedChart["chartData"]
 ): SavedChart {
   const newChart: SavedChart = {

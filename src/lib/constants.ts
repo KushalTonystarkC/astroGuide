@@ -14,76 +14,9 @@ export const FOOTER_LINKS = [
   { href: "#terms", label: "Terms" },
 ] as const
 
-export const ZODIAC_SIGNS = [
-  "Aries",
-  "Taurus",
-  "Gemini",
-  "Cancer",
-  "Leo",
-  "Virgo",
-  "Libra",
-  "Scorpio",
-  "Sagittarius",
-  "Capricorn",
-  "Aquarius",
-  "Pisces",
-] as const
-
-export const NAKSHATRAS = [
-  "Ashwini",
-  "Bharani",
-  "Krittika",
-  "Rohini",
-  "Mrigashira",
-  "Ardra",
-  "Punarvasu",
-  "Pushya",
-  "Ashlesha",
-  "Magha",
-  "Purva Phalguni",
-  "Uttara Phalguni",
-  "Hasta",
-  "Chitra",
-  "Swati",
-  "Vishakha",
-  "Anuradha",
-  "Jyeshtha",
-  "Mula",
-  "Purva Ashadha",
-  "Uttara Ashadha",
-  "Shravana",
-  "Dhanishta",
-  "Shatabhisha",
-  "Purva Bhadrapada",
-  "Uttara Bhadrapada",
-  "Revati",
-] as const
-
-export const PLANET_NAMES = [
-  "Sun",
-  "Moon",
-  "Mars",
-  "Mercury",
-  "Venus",
-  "Jupiter",
-  "Saturn",
-] as const
-
-export const SAMPLE_CHART = {
-  ascendant: "Scorpio",
-  moonSign: "Taurus",
-  sunSign: "Leo",
-  nakshatra: "Rohini",
-  planets: [
-    { name: "Sun", sign: "Leo" },
-    { name: "Moon", sign: "Taurus" },
-    { name: "Mars", sign: "Virgo" },
-    { name: "Mercury", sign: "Leo" },
-    { name: "Venus", sign: "Cancer" },
-    { name: "Jupiter", sign: "Sagittarius" },
-    { name: "Saturn", sign: "Aquarius" },
-  ],
-} as const
+export { RASHIS as ZODIAC_SIGNS } from "@/data/zodiac-signs"
+export { NAKSHATRAS } from "@/data/nakshatras"
+export { SEVEN_GRAHAS as PLANET_NAMES } from "@/data/planets"
 
 export const FEATURE_CARDS = [
   {

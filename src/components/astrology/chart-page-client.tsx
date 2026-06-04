@@ -16,9 +16,11 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
-import { fetchChartFromApi, getSampleChart } from "@/lib/astrology"
+import { generateKundli, getSampleKundli } from "@/lib/astrology"
 import { getChartById, saveChart } from "@/lib/local-storage"
-import type { AstrologyChart, BirthDetails } from "@/types/astrology"
+import { birthDetailsFromForm } from "@/types/birth"
+import type { BirthDetails } from "@/types/birth"
+import type { KundliChart } from "@/lib/astrology/types"
 import type { BirthDetailsFormValues } from "@/lib/validations"
 
 export function ChartPageClient() {
@@ -27,7 +29,7 @@ export function ChartPageClient() {
   const isSample = searchParams.get("sample") === "true"
 
   const [savedChart, setSavedChart] = useState<{
-    chart: AstrologyChart
+    chart: KundliChart
     birthDetails: BirthDetails
   } | null>(null)
 
@@ -42,23 +44,31 @@ export function ChartPageClient() {
       }
     } else if (isSample) {
       setSavedChart({
-        chart: getSampleChart(),
+        chart: getSampleKundli(),
         birthDetails: {
           name: "Sample Seeker",
-          birthDate: "1990-08-15",
-          birthTime: "14:30",
-          birthPlace: "Mumbai, India",
+          date: "1990-08-15",
+          time: "14:30",
+          place: "Mumbai, India",
         },
       })
     }
   }, [chartId, isSample])
 
   const mutation = useMutation({
-    mutationFn: fetchChartFromApi,
-    onSuccess: (chart, variables) => {
-      saveChart(variables, chart)
-      setSavedChart({ chart, birthDetails: variables })
-      toast.success("Birth chart generated and saved locally")
+    mutationFn: async (values: BirthDetailsFormValues) => {
+      const birthDetails = birthDetailsFromForm(values)
+      const chart = await generateKundli({
+        date: birthDetails.date,
+        time: birthDetails.time,
+        place: birthDetails.place,
+      })
+      return { chart, birthDetails }
+    },
+    onSuccess: ({ chart, birthDetails }) => {
+      saveChart(birthDetails, chart)
+      setSavedChart({ chart, birthDetails })
+      toast.success("Kundli generated and saved locally")
     },
     onError: (error: Error) => {
       toast.error(error.message)
@@ -79,7 +89,7 @@ export function ChartPageClient() {
     <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6 lg:px-8">
       <PageHeader
         title="Generate Your Chart"
-        description="Enter your birth details to receive a Vedic astrology chart with planetary positions and interpretations."
+        description="Enter your birth details to receive a Vedic Kundli with planetary positions and interpretations."
       />
 
       {!showResults && (
@@ -87,8 +97,8 @@ export function ChartPageClient() {
           <CardHeader>
             <CardTitle>Birth Details</CardTitle>
             <CardDescription>
-              Accurate birth time and place improve chart precision. All data stays
-              in your browser.
+              Accurate birth time and place improve chart precision. Requires
+              Swiss Ephemeris configuration on the server for live charts.
             </CardDescription>
           </CardHeader>
           <CardContent>

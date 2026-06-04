@@ -1,31 +1,16 @@
 import planetsData from "@/data/planets.json"
-import { ZODIAC_SIGNS } from "@/lib/constants"
-import type { AstrologyChart, PlanetPosition } from "@/types/astrology"
-
-const SIGN_ABBREV: Record<string, string> = {
-  Aries: "Ari",
-  Taurus: "Tau",
-  Gemini: "Gem",
-  Cancer: "Can",
-  Leo: "Leo",
-  Virgo: "Vir",
-  Libra: "Lib",
-  Scorpio: "Sco",
-  Sagittarius: "Sag",
-  Capricorn: "Cap",
-  Aquarius: "Aqu",
-  Pisces: "Pis",
-}
+import { RASHIS } from "@/data/zodiac-signs"
+import { getRashiAbbreviation, getRashiIndex } from "@/lib/astrology/zodiac"
+import type { KundliChart, PlanetPosition } from "@/lib/astrology/types"
 
 const planets = planetsData as Record<string, { symbol: string }>
 
 export function getSignIndex(sign: string): number {
-  const index = ZODIAC_SIGNS.indexOf(sign as (typeof ZODIAC_SIGNS)[number])
-  return index >= 0 ? index : 0
+  return getRashiIndex(sign)
 }
 
 export function getSignAbbrev(sign: string): string {
-  return SIGN_ABBREV[sign] ?? sign.slice(0, 3)
+  return getRashiAbbreviation(sign)
 }
 
 export function getPlanetSymbol(name: string): string {
@@ -63,7 +48,7 @@ export interface PlacedPlanet {
 }
 
 export function layoutPlanetsOnWheel(
-  chart: AstrologyChart,
+  chart: KundliChart,
   cx: number,
   cy: number,
   planetRadius: number
@@ -79,7 +64,7 @@ export function layoutPlanetsOnWheel(
   const placed: PlacedPlanet[] = []
 
   for (const [sign, planetsInSign] of bySign) {
-    const baseAngle = signToAngle(sign, chart.ascendant)
+    const baseAngle = signToAngle(sign, chart.lagna)
     planetsInSign.forEach((planet, index) => {
       const spread =
         planetsInSign.length > 1
@@ -92,8 +77,8 @@ export function layoutPlanetsOnWheel(
         baseAngle + spread
       )
       placed.push({
-        name: planet.name,
-        symbol: getPlanetSymbol(planet.name),
+        name: planet.planet,
+        symbol: getPlanetSymbol(planet.planet),
         sign: planet.sign,
         x,
         y,
@@ -106,7 +91,7 @@ export function layoutPlanetsOnWheel(
 
 export function getWheelSegments(ascendantSign: string) {
   const ascIndex = getSignIndex(ascendantSign)
-  return ZODIAC_SIGNS.map((sign, zodiacIndex) => {
+  return RASHIS.map((sign, zodiacIndex) => {
     const houseOffset = (zodiacIndex - ascIndex + 12) % 12
     return {
       sign,

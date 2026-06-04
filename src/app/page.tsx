@@ -90,8 +90,9 @@ export default function HomePage() {
         <div className="mx-auto max-w-6xl px-4 py-16 text-center sm:px-6 lg:px-8">
           <h2 className="text-2xl font-bold">Ready to explore your stars?</h2>
           <p className="mx-auto mt-3 max-w-xl text-muted-foreground">
-            Your chart is computed locally with a mock engine — swap in a real
-            astrology API when you are ready for production accuracy.
+            Your Kundli is computed server-side with Swiss Ephemeris-ready
+            architecture — accurate sidereal charts once the ephemeris adapter
+            is connected.
           </p>
           <ButtonLink href="/chart" className="mt-8" size="lg">
             Start Your Journey

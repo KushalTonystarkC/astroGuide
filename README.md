@@ -1,15 +1,17 @@
 # AstroGuide — Vedic Astrology MVP
 
-A production-quality MVP for Vedic astrology chart generation built with Next.js 15, TypeScript, Tailwind CSS, and shadcn/ui.
+A production-quality Vedic Kundli application built with Next.js 15, TypeScript, Tailwind CSS, and shadcn/ui.
 
 ## Features
 
 - Birth details form with React Hook Form + Zod validation
-- Mock astrology engine (deterministic, API-ready architecture)
-- Birth chart summary, planet positions table, sign interpretations
+- Server-side Kundli generation (`POST /api/kundli`)
+- Provider-based geocoding (OpenStreetMap, MapTiler, Google Maps)
+- Swiss Ephemeris–ready astrology engine (adapter injection)
+- Pure calculation layer for Rashi, Nakshatra, Pada, and houses
+- Birth chart summary, planet/house tables, sign interpretations
 - Local storage for saved charts
-- Chart history with delete support
-- Dark mode, responsive layout, accessible UI
+- Dark mode, responsive layout
 
 ## Tech Stack
 
@@ -19,90 +21,124 @@ A production-quality MVP for Vedic astrology chart generation built with Next.js
 - **shadcn/ui**
 - **React Hook Form** + **Zod**
 - **TanStack Query**
-- **Lucide React**
-- **next-themes**
 
 ## Quick Start
 
 ```bash
 npm install
+cp .env.example .env.local
 npm run dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000).
 
+Use **View Sample Report** for a static UI preview. Live chart generation requires a Swiss Ephemeris adapter (see below).
+
 ## Project Structure
 
 ```
 src/
-├── app/                    # Routes & API
-├── components/
-│   ├── astrology/          # Chart-specific UI
-│   ├── layout/             # Navbar, footer
-│   └── shared/             # Reusable primitives
-├── data/                   # signs, nakshatras, planets JSON
-├── lib/                    # Engine, storage, validation
-└── types/                  # TypeScript interfaces
+├── app/api/kundli/          # Kundli API route
+├── components/astrology/    # Chart UI (no calculations)
+├── data/                    # Rashis, Nakshatras, Grahas datasets
+├── lib/astrology/           # Domain engine
+│   ├── calculations.ts      # Pure functions
+│   ├── chart.ts             # assembleKundliChart()
+│   ├── geocoding.ts         # Geocoder factory
+│   ├── providers/           # Geocoding & ephemeris providers
+│   ├── dasha.ts             # Future: Vimshottari (interfaces)
+│   ├── transits.ts          # Future: transits (interfaces)
+│   └── compatibility.ts     # Future: match making (interfaces)
+└── types/                   # App-level type exports
 ```
 
 ## API
 
-`POST /api/astrology`
-
-Request body:
+`POST /api/kundli`
 
 ```json
 {
-  "name": "string",
-  "birthDate": "YYYY-MM-DD",
-  "birthTime": "HH:MM",
-  "birthPlace": "string"
+  "date": "1990-08-15",
+  "time": "14:30",
+  "place": "Bangalore, India"
 }
 ```
 
-Simulates 1000ms network delay and returns mock chart data.
+Response: `KundliChart` with `lagna`, `moonSign`, `nakshatra`, `planets`, `houses`.
 
-## Replacing the Mock Engine
+## Swiss Ephemeris ([aloistr/swisseph](https://github.com/aloistr/swisseph))
 
-1. Implement your provider in `src/lib/astrology.ts` (or a new `src/lib/providers/` module).
-2. Update `src/app/api/astrology/route.ts` to call the real provider.
-3. Keep response shape aligned with `AstrologyChart` in `src/types/astrology.ts`.
+| Piece | What it is |
+|-------|------------|
+| [aloistr/swisseph](https://github.com/aloistr/swisseph) | Official **C library** + `.se1` ephemeris data (Astrodienst) |
+| [`sweph`](https://www.npmjs.com/package/sweph) npm | **Node bindings** to that same C API (used by this app) |
+| `SWEPH_EPHE_PATH` | Folder with `sepl_*.se1`, `semo_*.se1`, `seas_*.se1` from the repo’s [`ephe/`](https://github.com/aloistr/swisseph/tree/master/ephe) directory |
 
-## shadcn Components Installed
+You do **not** `npm install` the GitHub repo directly. You install `sweph` and point it at ephemeris files from `aloistr/swisseph`.
 
-- button, card, form, input, label, table, skeleton, sheet, separator, badge, alert-dialog, sonner
-
-To add more:
+### Enable live Kundli
 
 ```bash
-npx shadcn@latest add [component]
+npm install sweph
+npm run setup:ephemeris   # downloads sepl_18, semo_18, seas_18 from GitHub
 ```
 
-## npm Packages
+`.env.local`:
 
-**Runtime:** next, react, react-dom, react-hook-form, zod, @hookform/resolvers, @tanstack/react-query, lucide-react, class-variance-authority, clsx, tailwind-merge, next-themes, @radix-ui/react-label, @radix-ui/react-slot
+```env
+ENABLE_SWISS_EPHEMERIS=true
+SWEPH_EPHE_PATH=./ephemeris
+ASTROLOGY_PROVIDER=swiss-ephemeris
+```
 
-**Dev:** typescript, tailwindcss, eslint, eslint-config-next
+Restart `npm run dev`.
+
+### Custom adapter (optional)
+
+1. Install a maintained Swiss Ephemeris binding.
+2. Implement `SwissEphemerisAdapter` in `src/lib/astrology/types.ts`:
+
+```typescript
+import { setSwissEphemerisAdapter } from "@/lib/astrology"
+
+setSwissEphemerisAdapter({
+  async calculateSiderealChart({ julianDayUt, latitude, longitude, ayanamsa }) {
+    // Return sidereal longitudes + ascendant
+    return {
+      ascendantLongitude: /* degrees 0-360 */,
+      positions: [
+        { planet: "Sun", longitude: 0 },
+        { planet: "Moon", longitude: 0 },
+        // ... Mars, Mercury, Jupiter, Venus, Saturn, Rahu, Ketu
+      ],
+    }
+  },
+})
+```
+
+3. Register at app startup (e.g. `instrumentation.ts` or server init).
+
+All sign/nakshatra/house mapping flows through `assembleKundliChart()` — no changes needed in UI or API.
+
+## Frontend Service
+
+```typescript
+import { generateKundli } from "@/lib/astrology"
+
+const chart = await generateKundli({ date, time, place })
+```
+
+React components never perform astrology calculations.
+
+## Environment Variables
+
+See `.env.example` for geocoding and provider configuration.
 
 ## Scripts
 
-| Command        | Description          |
-|----------------|----------------------|
-| `npm run dev`  | Start dev server     |
-| `npm run build`| Production build     |
-| `npm run start`| Start production     |
-| `npm run lint` | Run ESLint           |
-
-## Routes
-
-| Path       | Description                |
-|------------|----------------------------|
-| `/`        | Landing page               |
-| `/chart`   | Generate & view charts     |
-| `/history` | Saved charts (localStorage)|
-| `/chart?sample=true` | Sample report   |
-| `/chart?id={uuid}`   | View saved chart |
-
-## License
-
-Private MVP — for demonstration purposes.
+```bash
+npm run dev
+npm run build
+npm run start
+npm run lint
+```

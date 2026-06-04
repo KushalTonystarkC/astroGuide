@@ -13,10 +13,11 @@ import {
   layoutPlanetsOnWheel,
   polarToCartesian,
 } from "@/lib/chart-layout"
-import type { AstrologyChart } from "@/types/astrology"
+import { getRashiEnglishName } from "@/lib/astrology/zodiac"
+import type { KundliChart } from "@/lib/astrology/types"
 
 interface BirthChartWheelProps {
-  chart: AstrologyChart
+  chart: KundliChart
   className?: string
 }
 
@@ -51,7 +52,7 @@ function describeArc(
 }
 
 export function BirthChartWheel({ chart, className }: BirthChartWheelProps) {
-  const segments = getWheelSegments(chart.ascendant)
+  const segments = getWheelSegments(chart.lagna)
   const planets = layoutPlanetsOnWheel(chart, CX, CY, PLANET_R)
 
   return (
@@ -59,8 +60,8 @@ export function BirthChartWheel({ chart, className }: BirthChartWheelProps) {
       <CardHeader>
         <CardTitle>Birth Chart Wheel</CardTitle>
         <CardDescription>
-          Whole-sign chart with Lagna ({chart.ascendant}) at the 9 o&apos;clock
-          position · Mock placements for preview
+          Whole-sign chart with Lagna ({chart.lagna} /{" "}
+          {getRashiEnglishName(chart.lagna)}) at the 9 o&apos;clock position
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -68,7 +69,7 @@ export function BirthChartWheel({ chart, className }: BirthChartWheelProps) {
           <svg
             viewBox="0 0 400 400"
             role="img"
-            aria-label={`Vedic birth chart wheel with ascendant in ${chart.ascendant}`}
+            aria-label={`Vedic birth chart wheel with ascendant in ${chart.lagna}`}
             className="h-auto w-full max-w-[400px] drop-shadow-sm"
           >
             <defs>
@@ -204,7 +205,7 @@ export function BirthChartWheel({ chart, className }: BirthChartWheelProps) {
               textAnchor="middle"
               className="fill-foreground text-[15px] font-bold"
             >
-              {chart.ascendant}
+              {chart.lagna}
             </text>
 
             <line
@@ -226,12 +227,16 @@ export function BirthChartWheel({ chart, className }: BirthChartWheelProps) {
         <div className="mt-4 flex flex-wrap justify-center gap-3 text-xs text-muted-foreground">
           {chart.planets.map((planet) => (
             <span
-              key={planet.name}
+              key={planet.planet}
               className="inline-flex items-center gap-1 rounded-full border border-border bg-muted/40 px-2.5 py-1"
             >
-              <span className="text-primary">{getPlanetSymbol(planet.name)}</span>
-              <span className="font-medium text-foreground">{planet.name}</span>
-              <span>in {planet.sign}</span>
+              <span className="text-primary">
+                {getPlanetSymbol(planet.planet)}
+              </span>
+              <span className="font-medium text-foreground">{planet.planet}</span>
+              <span>
+                in {planet.sign} · H{planet.house}
+              </span>
             </span>
           ))}
         </div>

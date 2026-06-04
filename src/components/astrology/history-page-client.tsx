@@ -9,7 +9,7 @@ import { EmptyState } from "@/components/shared/empty-state"
 import { PageHeader } from "@/components/shared/page-header"
 import { ButtonLink } from "@/components/ui/button"
 import { getCharts, removeChart } from "@/lib/local-storage"
-import type { SavedChart } from "@/types/astrology"
+import type { SavedChart } from "@/types/birth"
 
 export function HistoryPageClient() {
   const [charts, setCharts] = useState<SavedChart[]>([])
