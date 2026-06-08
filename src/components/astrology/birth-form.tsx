@@ -14,6 +14,7 @@ import {
   FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
+import { PlaceSearchInput } from "@/components/astrology/place-search-input"
 import {
   birthDetailsSchema,
   type BirthDetailsFormValues,
@@ -103,10 +104,12 @@ export function BirthForm({
             <FormItem>
               <FormLabel>Birth Place</FormLabel>
               <FormControl>
-                <Input
-                  placeholder="City, State/Region, Country"
-                  autoComplete="address-level2"
-                  {...field}
+                <PlaceSearchInput
+                  value={field.value}
+                  onChange={field.onChange}
+                  onBlur={field.onBlur}
+                  disabled={isLoading}
+                  aria-invalid={!!form.formState.errors.birthPlace}
                 />
               </FormControl>
               <FormMessage />
