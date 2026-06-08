@@ -20,6 +20,7 @@ export interface PlanetPosition {
   sign: string
   degree: number
   house: number
+  isRetrograde?: boolean
 }
 
 export interface HousePosition {
@@ -38,6 +39,16 @@ export interface KundliChart {
   nakshatra: NakshatraInfo
   planets: PlanetPosition[]
   houses: HousePosition[]
+  /** North Indian chart SVG from vedic-calc, when available */
+  chartSvg?: string
+  /** Resolved birth-place coordinates */
+  location?: Location
+}
+
+export interface PlaceSuggestion {
+  displayName: string
+  latitude: number
+  longitude: number
 }
 
 /** Raw sidereal longitudes from an ephemeris provider (0–360°). */

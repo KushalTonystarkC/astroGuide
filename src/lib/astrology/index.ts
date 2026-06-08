@@ -8,6 +8,7 @@ export type {
   HousePosition,
   KundliChart,
   Location,
+  PlaceSuggestion,
   NakshatraInfo,
   PlanetPosition,
   RawChartData,

@@ -1,6 +1,9 @@
 import { geocodePlace } from "@/lib/astrology/geocoding"
 import { ensureSwissEphemerisRegistered } from "@/lib/astrology/register-ephemeris"
-import { createAstrologyProvider } from "@/lib/astrology/providers"
+import {
+  createAstrologyProvider,
+  getAstrologyProviderName,
+} from "@/lib/astrology/providers"
 import type {
   AstrologyProvider,
   BirthDetails,
@@ -21,7 +24,9 @@ export async function generateKundliServer(
   input: BirthDetails,
   options: GenerateKundliOptions = {}
 ): Promise<KundliChart> {
-  await ensureSwissEphemerisRegistered()
+  if (getAstrologyProviderName() === "swiss-ephemeris") {
+    await ensureSwissEphemerisRegistered()
+  }
 
   const location = options.geocoder
     ? await options.geocoder.geocode(input.place)

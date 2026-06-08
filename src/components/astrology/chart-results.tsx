@@ -2,10 +2,9 @@
 
 import { CheckCircle2 } from "lucide-react"
 
-import { BirthChartNorthIndian } from "@/components/astrology/birth-chart-north-indian"
 import { ChartSummary } from "@/components/astrology/chart-summary"
 import { HouseTable } from "@/components/astrology/house-table"
-import { PlanetTable } from "@/components/astrology/planet-table"
+import { KundliReport } from "@/components/astrology/kundli-report"
 import { ZodiacCard } from "@/components/astrology/zodiac-card"
 import { getInterpretationsForChart } from "@/lib/astrology"
 import { getRashiEnglishName } from "@/lib/astrology/zodiac"
@@ -43,9 +42,8 @@ export function ChartResults({ chart, birthDetails }: ChartResultsProps) {
         </div>
       </div>
 
-      <BirthChartNorthIndian chart={chart} />
+      <KundliReport chart={chart} />
       <ChartSummary chart={chart} />
-      <PlanetTable planets={chart.planets} />
       <HouseTable houses={chart.houses} />
 
       <section aria-labelledby="interpretations-heading">
