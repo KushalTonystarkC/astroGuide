@@ -97,8 +97,9 @@ export function ChartPageClient() {
           <CardHeader>
             <CardTitle>Birth Details</CardTitle>
             <CardDescription>
-              Accurate birth time and place improve chart precision. Requires
-              Swiss Ephemeris configuration on the server for live charts.
+              Accurate birth time and place improve chart precision. Birth place
+              is geocoded via OpenStreetMap to obtain coordinates for the
+              Kundli calculation.
             </CardDescription>
           </CardHeader>
           <CardContent>

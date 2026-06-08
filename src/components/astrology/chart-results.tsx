@@ -43,7 +43,14 @@ export function ChartResults({ chart, birthDetails }: ChartResultsProps) {
         </div>
       </div>
 
-      <BirthChartNorthIndian chart={chart} />
+      {chart.chartSvg ? (
+        <div
+          className="overflow-x-auto rounded-xl border border-border bg-card p-4"
+          dangerouslySetInnerHTML={{ __html: chart.chartSvg }}
+        />
+      ) : (
+        <BirthChartNorthIndian chart={chart} />
+      )}
       <ChartSummary chart={chart} />
       <PlanetTable planets={chart.planets} />
       <HouseTable houses={chart.houses} />

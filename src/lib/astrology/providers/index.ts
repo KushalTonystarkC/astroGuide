@@ -4,6 +4,7 @@ import {
   createSwissEphemerisProvider,
   type AstrologyProviderName,
 } from "@/lib/astrology/providers/astrology/swiss-ephemeris"
+import { VedicCalcProvider } from "@/lib/astrology/providers/astrology/vedic-calc"
 import type { AstrologyProvider } from "@/lib/astrology/types"
 
 export function getAstrologyProviderName(): AstrologyProviderName {
@@ -11,11 +12,12 @@ export function getAstrologyProviderName(): AstrologyProviderName {
   if (
     env === "prokerala" ||
     env === "astrology-api" ||
-    env === "swiss-ephemeris"
+    env === "swiss-ephemeris" ||
+    env === "vedic-calc"
   ) {
     return env
   }
-  return "swiss-ephemeris"
+  return "vedic-calc"
 }
 
 export function createAstrologyProvider(
@@ -29,7 +31,9 @@ export function createAstrologyProvider(
     case "astrology-api":
       return new AstrologyApiProvider()
     case "swiss-ephemeris":
-    default:
       return createSwissEphemerisProvider()
+    case "vedic-calc":
+    default:
+      return new VedicCalcProvider()
   }
 }
