@@ -2,8 +2,13 @@ import { GeocodingError } from "@/lib/astrology/errors"
 import type { Geocoder, Location } from "@/lib/astrology/types"
 import { GoogleMapsGeocoder } from "@/lib/astrology/providers/geocoding/google-maps"
 import { MapTilerGeocoder } from "@/lib/astrology/providers/geocoding/maptiler"
-import { OpenStreetMapGeocoder } from "@/lib/astrology/providers/geocoding/openstreetmap"
+import {
+  OpenStreetMapGeocoder,
+  type PlaceSuggestion,
+} from "@/lib/astrology/providers/geocoding/openstreetmap"
 import { resolveTimezone } from "@/lib/astrology/providers/geocoding/timezone"
+
+export type { PlaceSuggestion }
 
 export type GeocodingProviderName = "openstreetmap" | "maptiler" | "google"
 
@@ -59,4 +64,21 @@ export async function geocodePlace(
 
   const timezone = await resolveTimezone(base.latitude, base.longitude)
   return { ...base, timezone }
+}
+
+/**
+ * Search for place suggestions via OpenStreetMap Nominatim.
+ */
+export async function searchPlaces(
+  query: string,
+  limit = 5
+): Promise<PlaceSuggestion[]> {
+  const provider = getGeocodingProviderName()
+  if (provider !== "openstreetmap") {
+    throw new GeocodingError(
+      "Place search is only available with the OpenStreetMap geocoding provider"
+    )
+  }
+
+  return new OpenStreetMapGeocoder().search(query, limit)
 }
