@@ -108,7 +108,7 @@ export function getWheelSegments(ascendantSign: string) {
 const NORTH_BASE_WIDTH = 400
 const NORTH_BASE_HEIGHT = 300
 const NORTH_VIEW_SIZE = 400
-const NORTH_MARGIN = 20
+const NORTH_MARGIN = 24
 
 /** Polygons keyed by house number (1 = top-center Lagna, counter-clockwise). */
 const NORTH_HOUSE_POLYGONS: Record<number, [number, number][]> = {
@@ -178,20 +178,51 @@ const NORTH_HOUSE_POLYGONS: Record<number, [number, number][]> = {
   ],
 }
 
+/**
+ * Sign numbers on the outer edge; planet clusters toward each house interior.
+ * Positions tuned to the 400×300 house polygons (counter-clockwise from house 1).
+ */
 const NORTH_HOUSE_CENTERS: Record<number, [number, number]> = {
-  1: [190, 75],
-  2: [100, 30],
-  3: [30, 75],
-  4: [90, 150],
-  5: [30, 225],
-  6: [90, 278],
-  7: [190, 225],
-  8: [290, 278],
-  9: [360, 225],
-  10: [290, 150],
-  11: [360, 75],
-  12: [290, 30],
+  1: [200, 95],
+  2: [95, 38],
+  3: [48, 78],
+  4: [95, 150],
+  5: [48, 222],
+  6: [92, 268],
+  7: [200, 210],
+  8: [298, 262],
+  9: [348, 218],
+  10: [318, 150],
+  11: [348, 82],
+  12: [305, 38],
 }
+
+const NORTH_SIGN_LABEL_POSITIONS: Record<number, [number, number]> = {
+  1: [200, 18],
+  2: [30, 12],
+  3: [12, 75],
+  4: [22, 150],
+  5: [12, 262],
+  6: [55, 288],
+  7: [200, 278],
+  8: [362, 288],
+  9: [382, 228],
+  10: [378, 150],
+  11: [382, 42],
+  12: [362, 12],
+}
+
+const PLANET_DISPLAY_ORDER = [
+  "Sun",
+  "Moon",
+  "Mars",
+  "Mercury",
+  "Jupiter",
+  "Venus",
+  "Saturn",
+  "Rahu",
+  "Ketu",
+] as const
 
 function scaleNorthIndianPoint(x: number, y: number): { x: number; y: number } {
   const inner = NORTH_VIEW_SIZE - NORTH_MARGIN * 2
@@ -215,12 +246,22 @@ export interface NorthIndianHouseCell {
   houseNumber: number
   sign: string
   abbrev: string
+  signNumber: number
   path: string
   labelX: number
   labelY: number
+  signLabelX: number
+  signLabelY: number
   centerX: number
   centerY: number
   isAscendant: boolean
+}
+
+export interface NorthIndianPlanetPlacement {
+  planet: PlanetPosition
+  x: number
+  y: number
+  fontSize: number
 }
 
 export function getNorthIndianHouses(chart: KundliChart): NorthIndianHouseCell[] {
@@ -231,26 +272,111 @@ export function getNorthIndianHouses(chart: KundliChart): NorthIndianHouseCell[]
   return Array.from({ length: 12 }, (_, index) => {
     const houseNumber = index + 1
     const sign = signByHouse.get(houseNumber) ?? chart.lagna
-    const center = scaleNorthIndianPoint(
-      ...NORTH_HOUSE_CENTERS[houseNumber]
-    )
-    const label = scaleNorthIndianPoint(
-      NORTH_HOUSE_CENTERS[houseNumber][0],
-      NORTH_HOUSE_CENTERS[houseNumber][1] + 18
-    )
+    const [centerX, centerY] = NORTH_HOUSE_CENTERS[houseNumber]
+    const [signX, signY] = NORTH_SIGN_LABEL_POSITIONS[houseNumber]
+    const center = scaleNorthIndianPoint(centerX, centerY)
+    const signLabel = scaleNorthIndianPoint(signX, signY)
 
     return {
       houseNumber,
       sign,
       abbrev: getSignAbbrev(sign),
+      signNumber: getSignIndex(sign) + 1,
       path: polygonToPath(NORTH_HOUSE_POLYGONS[houseNumber]),
-      labelX: label.x,
-      labelY: label.y,
+      labelX: signLabel.x,
+      labelY: signLabel.y,
+      signLabelX: signLabel.x,
+      signLabelY: signLabel.y,
       centerX: center.x,
       centerY: center.y,
       isAscendant: houseNumber === 1,
     }
   })
+}
+
+function sortPlanetsByDisplayOrder(planets: PlanetPosition[]): PlanetPosition[] {
+  return [...planets].sort(
+    (a, b) =>
+      PLANET_DISPLAY_ORDER.indexOf(a.planet as (typeof PLANET_DISPLAY_ORDER)[number]) -
+      PLANET_DISPLAY_ORDER.indexOf(b.planet as (typeof PLANET_DISPLAY_ORDER)[number])
+  )
+}
+
+function layoutPlanetsInHouse(
+  planetsInHouse: PlanetPosition[],
+  centerX: number,
+  centerY: number
+): NorthIndianPlanetPlacement[] {
+  const count = planetsInHouse.length
+  if (count === 0) return []
+
+  const fontSize = count >= 5 ? 9 : count >= 4 ? 10 : 11
+
+  if (count <= 3) {
+    const lineHeight = 13
+    const startY = centerY - ((count - 1) * lineHeight) / 2
+    return planetsInHouse.map((planet, index) => ({
+      planet,
+      x: centerX,
+      y: startY + index * lineHeight,
+      fontSize,
+    }))
+  }
+
+  const cols = 2
+  const colGap = count >= 5 ? 26 : 30
+  const rowGap = count >= 5 ? 11 : 12
+  const rows = Math.ceil(count / cols)
+  const totalHeight = (rows - 1) * rowGap
+  const startY = centerY - totalHeight / 2
+
+  return planetsInHouse.map((planet, index) => {
+    const row = Math.floor(index / cols)
+    const col = index % cols
+    const itemsInRow = Math.min(cols, count - row * cols)
+    const rowWidth = (itemsInRow - 1) * colGap
+    const rowStartX = centerX - rowWidth / 2
+
+    return {
+      planet,
+      x: rowStartX + col * colGap,
+      y: startY + row * rowGap,
+      fontSize,
+    }
+  })
+}
+
+export function getNorthIndianPlanetPlacements(
+  chart: KundliChart
+): NorthIndianPlanetPlacement[] {
+  const houses = getNorthIndianHouses(chart)
+  const centerByHouse = new Map(
+    houses.map((house) => [house.houseNumber, house])
+  )
+  const byHouse = new Map<number, PlanetPosition[]>()
+
+  for (const planet of chart.planets) {
+    const list = byHouse.get(planet.house) ?? []
+    list.push(planet)
+    byHouse.set(planet.house, list)
+  }
+
+  const placements: NorthIndianPlanetPlacement[] = []
+
+  for (const [houseNumber, planetsInHouse] of byHouse) {
+    const house = centerByHouse.get(houseNumber)
+    if (!house) continue
+
+    placements.push(
+      ...layoutPlanetsInHouse(
+        sortPlanetsByDisplayOrder(planetsInHouse),
+        house.centerX,
+        house.centerY
+      )
+    )
+  }
+
+  return placements
 }
 
 export function layoutPlanetsInNorthIndian(chart: KundliChart): PlacedPlanet[] {
@@ -292,6 +418,26 @@ export function layoutPlanetsInNorthIndian(chart: KundliChart): PlacedPlanet[] {
   }
 
   return placed
+}
+
+export function getNorthIndianDiagonalLines(): string {
+  const tl = scaleNorthIndianPoint(0, 0)
+  const tr = scaleNorthIndianPoint(NORTH_BASE_WIDTH, 0)
+  const br = scaleNorthIndianPoint(NORTH_BASE_WIDTH, NORTH_BASE_HEIGHT)
+  const bl = scaleNorthIndianPoint(0, NORTH_BASE_HEIGHT)
+  const top = scaleNorthIndianPoint(NORTH_BASE_WIDTH / 2, 0)
+  const bottom = scaleNorthIndianPoint(NORTH_BASE_WIDTH / 2, NORTH_BASE_HEIGHT)
+  const left = scaleNorthIndianPoint(0, NORTH_BASE_HEIGHT / 2)
+  const right = scaleNorthIndianPoint(NORTH_BASE_WIDTH, NORTH_BASE_HEIGHT / 2)
+
+  return [
+    `M ${tl.x} ${tl.y} L ${br.x} ${br.y}`,
+    `M ${tr.x} ${tr.y} L ${bl.x} ${bl.y}`,
+    `M ${left.x} ${left.y} L ${top.x} ${top.y}`,
+    `M ${top.x} ${top.y} L ${right.x} ${right.y}`,
+    `M ${right.x} ${right.y} L ${bottom.x} ${bottom.y}`,
+    `M ${bottom.x} ${bottom.y} L ${left.x} ${left.y}`,
+  ].join(" ")
 }
 
 /** Outer border path for the North Indian chart frame. */

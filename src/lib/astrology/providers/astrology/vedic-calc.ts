@@ -1,10 +1,4 @@
-import {
-  generateKundali,
-  generateNorthIndianChartSVG,
-  Planet,
-  type PlanetData,
-  type RasiChart,
-} from "vedic-calc"
+import { generateKundali, Planet, type PlanetData, type RasiChart } from "vedic-calc"
 
 import { ENGLISH_TO_RASHI } from "@/data/zodiac-signs"
 import { parseBirthDateTime } from "@/lib/astrology/datetime"
@@ -39,6 +33,7 @@ function mapPlanet(planet: PlanetData): PlanetPosition {
     sign: englishSignToRashi(planet.signName),
     degree: planet.degreeInSign,
     house: planet.house,
+    isRetrograde: planet.isRetrograde,
   }
 }
 
@@ -55,13 +50,6 @@ function mapKundliChart(rasi: RasiChart, location: Location): KundliChart {
     throw new Error("Moon position is required to build a Kundli chart")
   }
 
-  const chartSvg = generateNorthIndianChartSVG(rasi, {
-    showTable: true,
-    layout: "column",
-    width: 450,
-    height: 350,
-  })
-
   return {
     lagna: englishSignToRashi(rasi.ascendant.signName),
     moonSign: englishSignToRashi(moon.signName),
@@ -71,7 +59,6 @@ function mapKundliChart(rasi: RasiChart, location: Location): KundliChart {
     },
     planets: rasi.planets.map(mapPlanet),
     houses: mapHouses(rasi),
-    chartSvg,
     location,
   }
 }

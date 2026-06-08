@@ -20,6 +20,7 @@ export interface PlanetPosition {
   sign: string
   degree: number
   house: number
+  isRetrograde?: boolean
 }
 
 export interface HousePosition {
