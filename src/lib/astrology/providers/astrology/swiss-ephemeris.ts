@@ -11,7 +11,6 @@ import type {
 } from "@/lib/astrology/types"
 
 export type AstrologyProviderName =
-  | "vedic-calc"
   | "swiss-ephemeris"
   | "prokerala"
   | "astrology-api"
