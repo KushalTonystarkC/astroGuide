@@ -6,6 +6,7 @@ import { Menu, Moon, Sparkles, Sun } from "lucide-react"
 import { useTheme } from "next-themes"
 import { useState } from "react"
 
+import { LanguageSwitcher } from "@/components/layout/language-switcher"
 import { Button } from "@/components/ui/button"
 import {
   Sheet,
@@ -14,12 +15,14 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet"
+import { useI18n } from "@/i18n"
 import { APP_NAME, NAV_LINKS } from "@/lib/constants"
 import { cn } from "@/lib/utils"
 
 export function Navbar() {
   const pathname = usePathname()
   const { theme, setTheme } = useTheme()
+  const { t } = useI18n()
   const [open, setOpen] = useState(false)
 
   return (
@@ -50,12 +53,14 @@ export function Navbar() {
                   : "text-muted-foreground"
               )}
             >
-              {link.label}
+              {t(link.labelKey)}
             </Link>
           ))}
         </div>
 
         <div className="flex items-center gap-2">
+          <LanguageSwitcher className="hidden sm:inline-flex" />
+
           <Button
             variant="ghost"
             size="icon"
@@ -70,11 +75,7 @@ export function Navbar() {
             <SheetTrigger
               className="md:hidden"
               render={
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  aria-label="Open menu"
-                />
+                <Button variant="ghost" size="icon" aria-label="Open menu" />
               }
             >
               <Menu className="size-5" />
@@ -83,7 +84,10 @@ export function Navbar() {
               <SheetHeader>
                 <SheetTitle>{APP_NAME}</SheetTitle>
               </SheetHeader>
-              <div className="mt-6 flex flex-col gap-2">
+              <div className="mt-4 mb-6">
+                <LanguageSwitcher className="w-full" />
+              </div>
+              <div className="flex flex-col gap-2">
                 {NAV_LINKS.map((link) => (
                   <Link
                     key={link.href}
@@ -96,7 +100,7 @@ export function Navbar() {
                         : "text-muted-foreground"
                     )}
                   >
-                    {link.label}
+                    {t(link.labelKey)}
                   </Link>
                 ))}
               </div>

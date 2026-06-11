@@ -33,21 +33,21 @@ export default function HomePage() {
             </div>
             <h1 className="text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl">
               Discover Your{" "}
-              <span className="bg-gradient-to-r from-violet-600 via-purple-500 to-indigo-500 bg-clip-text text-transparent dark:from-violet-400 dark:via-purple-300 dark:to-indigo-400">
+              <span className="bg-gradient-to-r from-violet-700 via-purple-600 to-indigo-600 bg-clip-text text-transparent dark:from-violet-400 dark:via-purple-300 dark:to-indigo-400">
                 Cosmic Blueprint
               </span>
             </h1>
             <p className="mx-auto mt-6 max-w-2xl text-lg text-muted-foreground">
-              Generate your Vedic astrology chart from your birth details and
-              explore your planetary influences.
+              Panchang, birth charts, auspicious timings, and planetary
+              transits — accurate, free, and powered by Swiss Ephemeris.
             </p>
             <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
-              <ButtonLink href="/chart" size="lg">
-                Generate Chart
+              <ButtonLink href="/panchang" size="lg">
+                Today&apos;s Panchang
                 <ArrowRight className="size-4" aria-hidden="true" />
               </ButtonLink>
-              <ButtonLink href="/chart?sample=true" size="lg" variant="outline">
-                View Sample Report
+              <ButtonLink href="/chart" size="lg" variant="outline">
+                Generate Kundali
               </ButtonLink>
             </div>
           </div>
@@ -57,10 +57,10 @@ export default function HomePage() {
       <section className="mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
         <div className="mb-10 text-center">
           <h2 className="text-2xl font-bold tracking-tight sm:text-3xl">
-            What You&apos;ll Discover
+            Vedic Astrology Tools
           </h2>
           <p className="mt-3 text-muted-foreground">
-            Explore the foundational pillars of your Vedic birth chart
+            Everything you need for daily Panchang and birth chart analysis
           </p>
         </div>
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
@@ -69,7 +69,7 @@ export default function HomePage() {
             return (
               <Card
                 key={feature.title}
-                className="group border-border/80 bg-card/50 transition-all hover:border-primary/30 hover:shadow-lg"
+                className="group border-border bg-card transition-all hover:border-primary/30 hover:shadow-lg"
               >
                 <CardHeader>
                   <div className="mb-2 flex size-11 items-center justify-center rounded-xl bg-gradient-to-br from-violet-500/20 to-indigo-500/20 text-primary transition-transform group-hover:scale-105">
@@ -79,6 +79,15 @@ export default function HomePage() {
                   <CardDescription className="leading-relaxed">
                     {feature.description}
                   </CardDescription>
+                  <ButtonLink
+                    href={feature.href}
+                    variant="ghost"
+                    size="sm"
+                    className="mt-2 w-fit px-0 text-primary"
+                  >
+                    Open tool
+                    <ArrowRight className="size-4" aria-hidden="true" />
+                  </ButtonLink>
                 </CardHeader>
               </Card>
             )
@@ -90,12 +99,11 @@ export default function HomePage() {
         <div className="mx-auto max-w-6xl px-4 py-16 text-center sm:px-6 lg:px-8">
           <h2 className="text-2xl font-bold">Ready to explore your stars?</h2>
           <p className="mx-auto mt-3 max-w-xl text-muted-foreground">
-            Your Kundli is computed server-side with Swiss Ephemeris-ready
-            architecture — accurate sidereal charts once the ephemeris adapter
-            is connected.
+            Computed with Swiss Ephemeris — the same precision used by
+            professional Jyotish practitioners.
           </p>
           <ButtonLink href="/chart" className="mt-8" size="lg">
-            Start Your Journey
+            Generate Your Kundali
           </ButtonLink>
         </div>
       </section>
