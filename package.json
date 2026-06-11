@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
-    "build": "next build --turbopack",
+    "prebuild": "bash scripts/setup-ephemeris.sh",
+    "build": "next build",
     "start": "next start",
     "lint": "eslint",
     "setup:ephemeris": "bash scripts/setup-ephemeris.sh",
