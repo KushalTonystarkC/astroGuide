@@ -1,4 +1,5 @@
 import type { KundliChart } from "@/lib/astrology/types"
+import type { ChartData } from "@/types/vedic-api"
 import type { BirthDetailsFormValues } from "@/lib/validations"
 
 /** Form and storage layer — includes display name alongside Kundli API fields. */
@@ -9,11 +10,13 @@ export interface BirthDetails {
   place: string
 }
 
+export type StoredChartData = ChartData | KundliChart
+
 export interface SavedChart {
   id: string
   createdAt: string
   birthDetails: BirthDetails
-  chartData: KundliChart
+  chartData: StoredChartData
 }
 
 export function birthDetailsFromForm(

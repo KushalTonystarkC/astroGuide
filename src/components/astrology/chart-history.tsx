@@ -22,6 +22,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
+import { getChartSummary } from "@/lib/chart-display"
 import type { SavedChart } from "@/types/birth"
 
 interface ChartHistoryProps {
@@ -32,7 +33,9 @@ interface ChartHistoryProps {
 export function ChartHistory({ charts, onDelete }: ChartHistoryProps) {
   return (
     <div className="grid gap-4 sm:grid-cols-2">
-      {charts.map((saved) => (
+      {charts.map((saved) => {
+        const summary = getChartSummary(saved.chartData)
+        return (
         <Card key={saved.id} className="transition-shadow hover:shadow-md">
           <CardHeader>
             <div className="flex items-start justify-between gap-2">
@@ -63,7 +66,7 @@ export function ChartHistory({ charts, onDelete }: ChartHistoryProps) {
                     <AlertDialogTitle>Delete this chart?</AlertDialogTitle>
                     <AlertDialogDescription>
                       This will permanently remove the saved chart for{" "}
-                      {saved.birthDetails.name} from your local history.
+                      {saved.birthDetails.name} from your history.
                     </AlertDialogDescription>
                   </AlertDialogHeader>
                   <AlertDialogFooter>
@@ -86,14 +89,14 @@ export function ChartHistory({ charts, onDelete }: ChartHistoryProps) {
             </p>
             <div className="flex flex-wrap gap-2">
               <Badge variant="secondary">
-                Lagna: {saved.chartData.lagna}
+                Lagna: {summary.lagna}
               </Badge>
               <Badge variant="outline">
-                Moon: {saved.chartData.moonSign}
+                Moon: {summary.moonSign}
               </Badge>
               <Badge variant="outline">
-                {saved.chartData.nakshatra.name} P
-                {saved.chartData.nakshatra.pada}
+                {summary.nakshatra.name} P
+                {summary.nakshatra.pada}
               </Badge>
             </div>
             <ButtonLink
@@ -106,7 +109,8 @@ export function ChartHistory({ charts, onDelete }: ChartHistoryProps) {
             </ButtonLink>
           </CardContent>
         </Card>
-      ))}
+        )
+      })}
     </div>
   )
 }

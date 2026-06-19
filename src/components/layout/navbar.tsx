@@ -6,6 +6,7 @@ import { Menu, Moon, Sparkles, Sun } from "lucide-react"
 import { useTheme } from "next-themes"
 import { useState } from "react"
 
+import { AuthNav } from "@/components/layout/auth-nav"
 import { LanguageSwitcher } from "@/components/layout/language-switcher"
 import { Button } from "@/components/ui/button"
 import {
@@ -59,6 +60,7 @@ export function Navbar() {
         </div>
 
         <div className="flex items-center gap-2">
+          <AuthNav className="hidden sm:flex" />
           <LanguageSwitcher className="hidden sm:inline-flex" />
 
           <Button
@@ -86,6 +88,9 @@ export function Navbar() {
               </SheetHeader>
               <div className="mt-4 mb-6">
                 <LanguageSwitcher className="w-full" />
+              </div>
+              <div className="mb-4 flex flex-col gap-2 border-b border-border pb-4">
+                <AuthNav />
               </div>
               <div className="flex flex-col gap-2">
                 {NAV_LINKS.map((link) => (
