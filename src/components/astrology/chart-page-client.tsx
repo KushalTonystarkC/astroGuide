@@ -1,6 +1,7 @@
 "use client"
 
 import { useMutation } from "@tanstack/react-query"
+import Link from "next/link"
 import { useSearchParams } from "next/navigation"
 import { useCallback, useEffect, useState } from "react"
 import { toast } from "sonner"
@@ -8,6 +9,7 @@ import { toast } from "sonner"
 import { BirthForm } from "@/components/astrology/birth-form"
 import { ChartLoadingState } from "@/components/astrology/loading-state"
 import { ChartResults } from "@/components/astrology/chart-results"
+import { useAuth } from "@/components/providers/auth-provider"
 import { PageHeader } from "@/components/shared/page-header"
 import {
   Card,
@@ -17,7 +19,8 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 import { generateKundli, getSampleKundli } from "@/lib/astrology"
-import { getChartById, saveChart } from "@/lib/local-storage"
+import { fetchChartById, saveChartToDb } from "@/lib/charts"
+import { isVedicChartData } from "@/lib/chart-display"
 import { birthDetailsFromForm } from "@/types/birth"
 import type { BirthDetails } from "@/types/birth"
 import type { KundliChart } from "@/lib/astrology/types"
@@ -27,31 +30,56 @@ export function ChartPageClient() {
   const searchParams = useSearchParams()
   const chartId = searchParams.get("id")
   const isSample = searchParams.get("sample") === "true"
+  const { user } = useAuth()
 
   const [savedChart, setSavedChart] = useState<{
     chart: KundliChart
     birthDetails: BirthDetails
   } | null>(null)
+  const [loadingSaved, setLoadingSaved] = useState(Boolean(chartId))
 
   useEffect(() => {
-    if (chartId) {
-      const existing = getChartById(chartId)
-      if (existing) {
+    if (!chartId) {
+      if (isSample) {
         setSavedChart({
-          chart: existing.chartData,
-          birthDetails: existing.birthDetails,
+          chart: getSampleKundli(),
+          birthDetails: {
+            name: "Sample Seeker",
+            date: "1990-08-15",
+            time: "14:30",
+            place: "Mumbai, India",
+          },
         })
       }
-    } else if (isSample) {
-      setSavedChart({
-        chart: getSampleKundli(),
-        birthDetails: {
-          name: "Sample Seeker",
-          date: "1990-08-15",
-          time: "14:30",
-          place: "Mumbai, India",
-        },
+      return
+    }
+
+    let cancelled = false
+    setLoadingSaved(true)
+
+    fetchChartById(chartId)
+      .then((existing) => {
+        if (cancelled) return
+        if (existing && !isVedicChartData(existing.chartData)) {
+          setSavedChart({
+            chart: existing.chartData,
+            birthDetails: existing.birthDetails,
+          })
+        } else if (existing) {
+          toast.error("This chart uses the new format — open it from Chart History")
+        } else {
+          toast.error("Chart not found")
+        }
       })
+      .catch((error: Error) => {
+        if (!cancelled) toast.error(error.message)
+      })
+      .finally(() => {
+        if (!cancelled) setLoadingSaved(false)
+      })
+
+    return () => {
+      cancelled = true
     }
   }, [chartId, isSample])
 
@@ -65,10 +93,30 @@ export function ChartPageClient() {
       })
       return { chart, birthDetails }
     },
-    onSuccess: ({ chart, birthDetails }) => {
-      saveChart(birthDetails, chart)
+    onSuccess: async ({ chart, birthDetails }) => {
       setSavedChart({ chart, birthDetails })
-      toast.success("Kundli generated and saved locally")
+
+      if (user) {
+        try {
+          await saveChartToDb(birthDetails, chart)
+          toast.success("Kundli generated and saved to your account")
+        } catch (error) {
+          toast.error(
+            error instanceof Error ? error.message : "Failed to save chart"
+          )
+        }
+      } else {
+        toast.success("Kundli generated", {
+          description: (
+            <>
+              <Link href="/login" className="underline">
+                Sign in
+              </Link>{" "}
+              to save charts to your account.
+            </>
+          ),
+        })
+      }
     },
     onError: (error: Error) => {
       toast.error(error.message)
@@ -92,7 +140,9 @@ export function ChartPageClient() {
         description="Enter your birth details to receive a Vedic Kundli with planetary positions and interpretations."
       />
 
-      {!showResults && (
+      {loadingSaved && <ChartLoadingState />}
+
+      {!showResults && !loadingSaved && (
         <Card className="mb-8">
           <CardHeader>
             <CardTitle>Birth Details</CardTitle>
@@ -115,14 +165,14 @@ export function ChartPageClient() {
         </p>
       )}
 
-      {showResults && !isGenerating && savedChart && (
+      {showResults && !isGenerating && !loadingSaved && savedChart && (
         <ChartResults
           chart={savedChart.chart}
           birthDetails={savedChart.birthDetails}
         />
       )}
 
-      {showResults && !isGenerating && (
+      {showResults && !isGenerating && !loadingSaved && (
         <div className="mt-8">
           <button
             type="button"

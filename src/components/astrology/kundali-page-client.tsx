@@ -1,6 +1,9 @@
 "use client"
 
+import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { toast } from "sonner";
 import { useI18n } from "@/i18n";
 import { BirthForm, type BirthFormState } from "@/components/kundali/BirthForm";
 import { BirthHeader } from "@/components/kundali/BirthHeader";
@@ -19,6 +22,10 @@ import { DrishtiPanel } from "@/components/kundali/DrishtiPanel";
 import { JaiminiSection } from "@/components/kundali/JaiminiSection";
 import { MandalaLoader } from "@/components/astrology/mandala-loader";
 import { ShareLinkButton } from "@/components/astrology/share-link-button";
+import { useAuth } from "@/components/providers/auth-provider";
+import { isVedicChartData } from "@/lib/chart-display";
+import { fetchChartById, saveChartToDb } from "@/lib/charts";
+import { saveChart as saveChartLocal } from "@/lib/local-storage";
 import { calculateChart, printPdf } from "@/lib/vedic/api";
 import {
   parseDate,
@@ -71,6 +78,23 @@ const PDF_LANGS = new Set<PdfLang>([
 const pdfLangFor = (uiLang: string): PdfLang =>
   PDF_LANGS.has(uiLang as PdfLang) ? (uiLang as PdfLang) : "en";
 
+function pdfFilename(name: string, birthDate: string): string {
+  const safeName =
+    name.replace(/[^a-zA-Z0-9_-]/g, "").slice(0, 40) || "kundali";
+  return `vedic-kundali-${safeName}-${birthDate || "chart"}.pdf`;
+}
+
+function triggerBlobDownload(blob: Blob, filename: string): string {
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  return url;
+}
+
 const DEFAULT_FORM: BirthFormState = {
   birth_date: "1995-08-29",
   birth_time: "12:00",
@@ -88,6 +112,9 @@ interface Props {
 
 export function KundaliPage({ sharedLocation, onLocationChange }: Props) {
   const { t, lang } = useI18n();
+  const { user } = useAuth();
+  const searchParams = useSearchParams();
+  const savedChartIdParam = searchParams.get("id");
 
   // Capture URL params once on mount. Lat/lon together signal a shared link
   // worth honoring; without both we fall back to sharedLocation.
@@ -137,6 +164,10 @@ export function KundaliPage({ sharedLocation, onLocationChange }: Props) {
   const [error, setError] = useState<string | null>(null);
   const [nativeName, setNativeName] = useState<string>(initialParams.name ?? "");
   const [printing, setPrinting] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [savedChartId, setSavedChartId] = useState<string | null>(
+    savedChartIdParam,
+  );
   const [selectedPlanet, setSelectedPlanet] = useState<string | null>(null);
   const [detailPlanetAbbr, setDetailPlanetAbbr] = useState<string | null>(null);
   const [detailHouseNum, setDetailHouseNum] = useState<number | null>(null);
@@ -258,6 +289,7 @@ export function KundaliPage({ sharedLocation, onLocationChange }: Props) {
       });
       setData(result);
       setSubmittedPlaceName(body.place_name);
+      setSavedChartId(null);
     } catch (e) {
       setError((e as Error).message || "Failed to compute chart");
       // Keep previous chart visible on error rather than wiping it.
@@ -267,11 +299,69 @@ export function KundaliPage({ sharedLocation, onLocationChange }: Props) {
   };
 
   useEffect(() => {
+    if (!savedChartIdParam) return;
+
+    let cancelled = false;
+    setLoading(true);
+
+    fetchChartById(savedChartIdParam)
+      .then((saved) => {
+        if (cancelled) return;
+        if (!saved) {
+          setError("Chart not found");
+          setLoading(false);
+          return;
+        }
+
+        const loadedForm: BirthFormState = {
+          ...DEFAULT_FORM,
+          birth_date: saved.birthDetails.date,
+          birth_time: saved.birthDetails.time,
+          place_name: saved.birthDetails.place,
+          latitude: form.latitude,
+          longitude: form.longitude,
+          timezone: form.timezone,
+          ayanamsa: form.ayanamsa,
+        };
+
+        if (isVedicChartData(saved.chartData)) {
+          loadedForm.latitude = saved.chartData.birth.latitude;
+          loadedForm.longitude = saved.chartData.birth.longitude;
+          loadedForm.timezone = saved.chartData.birth.timezone;
+          loadedForm.ayanamsa = saved.chartData.birth.ayanamsa_id;
+        }
+
+        setForm(loadedForm);
+        setNativeName(saved.birthDetails.name);
+        setSubmittedPlaceName(saved.birthDetails.place);
+        setSavedChartId(saved.id);
+
+        if (isVedicChartData(saved.chartData)) {
+          setData(saved.chartData);
+          setLoading(false);
+          return;
+        }
+
+        void calculate(loadedForm);
+      })
+      .catch((e: Error) => {
+        if (!cancelled) setError(e.message || "Failed to load chart");
+        if (!cancelled) setLoading(false);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [savedChartIdParam]);
+
+  useEffect(() => {
+    if (savedChartIdParam) return;
     if (didAutoRunRef.current) return;
     didAutoRunRef.current = true;
     calculate(form);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [savedChartIdParam]);
 
   useEffect(() => {
     if (!scrollToResults || loading) return;
@@ -297,6 +387,42 @@ export function KundaliPage({ sharedLocation, onLocationChange }: Props) {
     });
     setScrollToResults(true);
     calculate(form);
+  };
+
+  const onSave = async () => {
+    if (!data) return;
+    setSaving(true);
+    setError(null);
+    try {
+      const birthDetails = {
+        name: nativeName || "Unknown",
+        date: form.birth_date,
+        time: form.birth_time,
+        place: submittedPlaceName,
+      };
+
+      if (user) {
+        const saved = await saveChartToDb(birthDetails, data);
+        setSavedChartId(saved.id);
+        toast.success(t("chart_saved"));
+      } else {
+        const saved = saveChartLocal(birthDetails, data);
+        setSavedChartId(saved.id);
+        toast.success(t("chart_saved_local"), {
+          description: (
+            <>
+              <Link href="/login" className="underline">
+                {t("sign_in_to_sync")}
+              </Link>
+            </>
+          ),
+        });
+      }
+    } catch (e) {
+      setError((e as Error).message || "Failed to save chart");
+    } finally {
+      setSaving(false);
+    }
   };
 
   const onPrint = async () => {
@@ -338,34 +464,27 @@ export function KundaliPage({ sharedLocation, onLocationChange }: Props) {
         ayanamsa: form.ayanamsa,
         lang: pdfLangFor(lang),
       });
-      const url = URL.createObjectURL(blob);
+      const filename = pdfFilename(nativeName, form.birth_date);
+      const url = triggerBlobDownload(blob, filename);
       if (newTab && !newTab.closed) {
         // iOS Safari won't navigate a new tab directly to a blob URL via
         // location.href, but it WILL render a blob URL inside an iframe
-        // hosted in that tab. Replace the loading page with an iframe
-        // wrapping the PDF.
+        // hosted in that tab. Include a download link for browsers that
+        // block programmatic downloads after async work.
         newTab.document.open();
         newTab.document.write(
           "<!DOCTYPE html><html><head><title>Vedic Kundali</title>" +
             '<meta name="viewport" content="width=device-width,initial-scale=1">' +
-            '</head><body style="margin:0;height:100vh;background:#222">' +
+            '</head><body style="margin:0;height:100vh;background:#222;display:flex;flex-direction:column">' +
+            `<div style="padding:10px;background:#111;text-align:center">` +
+            `<a href="${url}" download="${filename}" ` +
+            'style="color:#fff;font-family:system-ui,sans-serif;font-size:14px;text-decoration:underline">' +
+            "Download PDF</a></div>" +
             `<iframe src="${url}" title="Vedic Kundali" ` +
-            'style="border:0;width:100%;height:100%;display:block"></iframe>' +
+            'style="border:0;flex:1;width:100%;display:block"></iframe>' +
             "</body></html>",
         );
         newTab.document.close();
-      } else {
-        // Popup was blocked entirely - fall back to an anchor click and
-        // let the browser/OS pick how to handle the file (download in
-        // most cases).
-        const a = document.createElement("a");
-        a.href = url;
-        a.target = "_blank";
-        a.rel = "noopener";
-        a.download = `vedic-kundali-${form.birth_date || "chart"}.pdf`;
-        document.body.appendChild(a);
-        a.click();
-        a.remove();
       }
       setTimeout(() => URL.revokeObjectURL(url), 60_000);
     } catch (e) {
@@ -400,7 +519,20 @@ export function KundaliPage({ sharedLocation, onLocationChange }: Props) {
               />
             </div>
             <BirthForm form={form} setForm={setForm} onSubmit={onSubmit} loading={loading} />
-            <div className="mt-3">
+            <div className="mt-3 space-y-2">
+              <button
+                type="button"
+                data-testid="save-chart"
+                onClick={() => void onSave()}
+                disabled={!data || saving || loading || Boolean(savedChartId)}
+                className="btn-primary w-full"
+              >
+                {savedChartId
+                  ? t("chart_saved")
+                  : saving
+                    ? t("saving_chart")
+                    : t("save_chart")}
+              </button>
               <button
                 type="button"
                 data-testid="print-pdf"

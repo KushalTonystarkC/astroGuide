@@ -4,6 +4,7 @@ import { Geist, Geist_Mono } from "next/font/google"
 import { Footer } from "@/components/layout/footer"
 import { Navbar } from "@/components/layout/navbar"
 import { VedicLocationProvider } from "@/components/astrology/vedic-location-provider"
+import { AuthProvider } from "@/components/providers/auth-provider"
 import { QueryProvider } from "@/components/providers/query-provider"
 import { ThemeProvider } from "@/components/providers/theme-provider"
 import { I18nProvider } from "@/i18n"
@@ -44,6 +45,7 @@ export default function RootLayout({
       >
         <ThemeProvider>
           <I18nProvider>
+            <AuthProvider>
             <QueryProvider>
               <VedicLocationProvider>
                 <div className="relative flex min-h-screen flex-col">
@@ -58,6 +60,7 @@ export default function RootLayout({
                 <Toaster richColors position="top-right" />
               </VedicLocationProvider>
             </QueryProvider>
+            </AuthProvider>
           </I18nProvider>
         </ThemeProvider>
       </body>

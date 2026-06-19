@@ -203,8 +203,13 @@ const en: Record<string, string> = {
   advertisement: "Advertisement",
 
   native_name: "Native Name (optional)",
-  print_pdf: "Print PDF",
+  print_pdf: "Download PDF",
   preparing_pdf: "Preparing PDF…",
+  save_chart: "Save chart",
+  saving_chart: "Saving…",
+  chart_saved: "Saved to your account",
+  chart_saved_local: "Saved in this browser",
+  sign_in_to_sync: "Sign in to sync charts across devices",
 
   col_body: "Body",
   col_sign: "Sign",
